@@ -180,6 +180,7 @@ raspi.init(() => {
 		        }
 		    
 			console.log(`Publish ${topic}`, object)
+			console.log(`Publish ${topic}`, JSON.parse(object))
 			client.publish(`${topic}`, JSON.parse(object))
 
 		        // Reset buffer
