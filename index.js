@@ -179,6 +179,7 @@ raspi.init(() => {
 			    object.check = check
 		        }
 		    
+			console.log(`Publish ${topic}`)
 			client.publish(`${topic}`, JSON.parse(object))
 
 		        // Reset buffer
