@@ -6,7 +6,7 @@ Publish data over MQTT.
 
 Run with Node.js v10.24.1 on a Raspberry Pi B v2.
 
-## Français 🇫🇷
+## Français :fr:
 
 Permet de lire les trames de téléinformation du compteur Linky.
 
