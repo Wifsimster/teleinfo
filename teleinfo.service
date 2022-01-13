@@ -1,0 +1,17 @@
+[Unit]
+
+Description=Teleinfo
+
+After=network-online.target
+
+[Service]
+
+ExecStart=node /usr/local/teleinfo/index.js
+
+Restart=on-failure
+
+User=pi
+
+[Install]
+
+WantedBy=multi-user.target
