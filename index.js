@@ -27,17 +27,25 @@ raspi.init(() => {
 		if(data.startsWith('\u0003')) {
 		    trame = trame.replace('\u0003', '')
 
-		    let serialNumber = /ADCO ([0-9 \w]+)/g.exec(trame)[1]
-		    if(serialNumber) {
-			client.publish(`${topic}/serialNumber`, serialNumber)
+		    let serialNumber = /ADCO ([0-9 \w]+)/g.exec(trame)
+		    if(serialNumber && serialNumber[1]) {
+			client.publish(`${topic}/serialNumber`, serialNumber[1])
 		    }
 
-		    let option = /OPTARIF ([A-Z 0-9]+)/g.exec(trame)[1]
-	            let subscribedIntensity = /ISOUSC ([0-9]+)/g.exec(trame)[1]
-		    let index = /BASE ([0-9]+)/g.exec(trame)[1]
-
-		    let result = { serialNumber, option, subscribedIntensity, index }
-		    client.publish(topic, JSON.stringify(result))
+		    let option = /OPTARIF ([A-Z 0-9]+)/g.exec(trame)    
+		    if(option && option[1]) {
+			client.publish(`${topic}/option`, option[1])
+		    }
+			
+	            let subscribedIntensity = /ISOUSC ([0-9]+)/g.exec(trame)	    
+		    if(subscribedIntensity && subscribedIntensity[1]) {
+			client.publish(`${topic}/subscribedIntensity`, subscribedIntensity[1])
+		    }
+			
+		    let index = /BASE ([0-9]+)/g.exec(trame)
+		    if(index && index[1]) {
+			client.publish(`${topic}/index`, index[1])
+		    }
 
 		    trame = ''
 		}
