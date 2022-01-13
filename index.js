@@ -35,6 +35,7 @@ raspi.init(() => {
 
 		    match = /ADCO ([0-9]+)/g.exec(buffer)
 		    if(match && match[1] && match[1] !== serialNumber) {
+			topic = `${topic}_serialNumber`
 			serialNumber = match[1]
 			client.publish(`${topic}/serialNumber`, serialNumber)
 		    }
