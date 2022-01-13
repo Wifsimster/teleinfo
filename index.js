@@ -12,7 +12,7 @@ raspi.init(() => {
         const serial = new Serial(config.serial)
         serial.open(() => {
 	    let buffer = '', match
-	    let serialNumber, option, subscribedIntensity, index, 
+	    let serialNumber, option, subscribedIntensity, index, currentPeriodTariff,
 		instantaneousIntensity, instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03,
 		maximumIntensity, maximumIntensity01, maximumIntensity02, maximumIntensity03,
 		subscribedPowerExceeded, maximumPower, apparentPower, timeGroup, check
@@ -57,6 +57,12 @@ raspi.init(() => {
 		    if(match && match[1] && match[1] !== index) {
 			index = match[1]
 			client.publish(`${topic}/index`, index)
+		    }
+			
+		    match = /PTEC ([A-Z]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== currentPeriodTariff) {
+			currentPeriodTariff = match[1]
+			client.publish(`${topic}/currentPeriodTariff`, currentPeriodTariff)
 		    }
 			
 		    match = /IINST ([0-9]+)/g.exec(buffer)
