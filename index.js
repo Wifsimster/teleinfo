@@ -11,43 +11,50 @@ raspi.init(() => {
         console.log('MQTT connected')
         const serial = new Serial(config.serial)
         serial.open(() => {
-	    let trame = ''
+	    let buffer = '', serialNumber, option, subscribedIntensity, index, match
+	    
             serial.on('data', data => {
-//              console.log(data, data.toString())
-//		console.log('------------------')
+		//console.log(data, data.toString())
+		// console.log('------------------')
 
 		data = data.toString()
-		trame += data
+		buffer += data
 
+		// Start of the buffer
 	        if(data.startsWith('\u0002\nADCO')) {
-		    trame = trame.replace('\u0002\n', '')
-		    console.log('Start reading buffer')
+		    buffer = buffer.replace('\u0002\n', '')
 		}
 
+		// End of the buffer
 		if(data.startsWith('\u0003')) {
-		    trame = trame.replace('\u0003', '')
+		    buffer = buffer.replace('\u0003', '')
 
-		    let serialNumber = /ADCO ([0-9 \w]+)/g.exec(trame)
-		    if(serialNumber && serialNumber[1]) {
-			client.publish(`${topic}/serialNumber`, serialNumber[1])
+		    match = /ADCO ([0-9 \w]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== serialNumber) {
+			serialNumber = match[1]
+			client.publish(`${topic}/serialNumber`, serialNumber)
 		    }
 
-		    let option = /OPTARIF ([A-Z 0-9]+)/g.exec(trame)    
-		    if(option && option[1]) {
-			client.publish(`${topic}/option`, option[1])
+		    match = /OPTARIF ([A-Z 0-9]+)/g.exec(buffer)    
+		    if(match && match[1] && match[1] !== option) {
+			option = match[1]
+			client.publish(`${topic}/option`, option)
 		    }
 			
-	            let subscribedIntensity = /ISOUSC ([0-9]+)/g.exec(trame)	    
-		    if(subscribedIntensity && subscribedIntensity[1]) {
-			client.publish(`${topic}/subscribedIntensity`, subscribedIntensity[1])
+	            match = /ISOUSC ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== subscribedIntensity) {
+			subscribedIntensity = match[1]
+			client.publish(`${topic}/subscribedIntensity`, subscribedIntensity)
 		    }
 			
-		    let index = /BASE ([0-9]+)/g.exec(trame)
-		    if(index && index[1]) {
-			client.publish(`${topic}/index`, index[1])
+		    match = /BASE ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== index) {
+			index = match[1]
+			client.publish(`${topic}/index`, index)
 		    }
 
-		    trame = ''
+		    // Reset buffer
+		    buffer = ''
 		}
             })
         })
