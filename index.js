@@ -4,7 +4,7 @@ const config = require('./config')
 const mqtt = require('mqtt')
 
 raspi.init(() => {
-    const client = mqtt.connect(`mqtt://${config.mqtt.host}:${config.mqtt.port}`)
+    const client = mqtt.connect(`mqtt://${config.mqtt.host}:${config.mqtt.port}`, { clientId: `teleinfo_${Math.random().toString(16).slice(3)}` })
     const topic = '/linky'
 
     client.on('connect', () => {
