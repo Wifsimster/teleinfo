@@ -13,8 +13,9 @@ raspi.init(() => {
         serial.open(() => {
 	    let buffer = '', match
 	    let serialNumber, option, subscribedIntensity, index, 
-		instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03,
-		subscribedPowerExceeded, maximumIntensity
+		instantaneousIntensity, instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03,
+		maximumIntensity, maximumIntensity01, maximumIntensity02, maximumIntensity03,
+		subscribedPowerExceeded, apparentPower
 	    
             serial.on('data', data => {
 		//console.log(data, data.toString())
@@ -58,19 +59,25 @@ raspi.init(() => {
 			client.publish(`${topic}/index`, index)
 		    }
 			
+		    match = /IINST ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== instantaneousIntensity) {
+			instantaneousIntensity = match[1]
+			client.publish(`${topic}/instantaneousIntensity`, instantaneousIntensity)
+		    }
+			
 		    match = /IINST1 ([0-9]+)/g.exec(buffer)
 		    if(match && match[1] && match[1] !== instantaneousIntensity01) {
 			instantaneousIntensity01 = match[1]
 			client.publish(`${topic}/instantaneousIntensity01`, instantaneousIntensity01)
 		    }
 			
-		    match = /IINST1 ([0-9]+)/g.exec(buffer)
+		    match = /IINST2 ([0-9]+)/g.exec(buffer)
 		    if(match && match[1] && match[1] !== instantaneousIntensity02) {
 			instantaneousIntensity02 = match[1]
 			client.publish(`${topic}/instantaneousIntensity02`, instantaneousIntensity02)
 		    }
 			
-		    match = /IINST1 ([0-9]+)/g.exec(buffer)
+		    match = /IINST3 ([0-9]+)/g.exec(buffer)
 		    if(match && match[1] && match[1] !== instantaneousIntensity03) {
 			instantaneousIntensity03 = match[1]
 			client.publish(`${topic}/instantaneousIntensity03`, instantaneousIntensity03)
@@ -86,6 +93,30 @@ raspi.init(() => {
 		    if(match && match[1] && match[1] !== maximumIntensity) {
 			maximumIntensity = match[1]
 			client.publish(`${topic}/maximumIntensity`, maximumIntensity)
+		    }
+			
+		    match = /IMAX1  ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== maximumIntensity01) {
+			maximumIntensity01 = match[1]
+			client.publish(`${topic}/maximumIntensity01`, maximumIntensity01)
+		    }
+			
+		    match = /IMAX2  ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== maximumIntensity02) {
+			maximumIntensity02 = match[1]
+			client.publish(`${topic}/maximumIntensity02`, maximumIntensity02)
+		    }
+			
+		    match = /IMAX3  ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== maximumIntensity03) {
+			maximumIntensity03 = match[1]
+			client.publish(`${topic}/maximumIntensity03`, maximumIntensity03)
+		    }
+			
+		    match = /PAPP  ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== apparentPower) {
+			apparentPower = match[1]
+			client.publish(`${topic}/apparentPower`, apparentPower)
 		    }			
 
 		    // Reset buffer
