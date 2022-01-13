@@ -15,7 +15,7 @@ raspi.init(() => {
 	    let serialNumber, option, subscribedIntensity, index, 
 		instantaneousIntensity, instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03,
 		maximumIntensity, maximumIntensity01, maximumIntensity02, maximumIntensity03,
-		subscribedPowerExceeded, apparentPower
+		subscribedPowerExceeded, maximumPower, apparentPower, timeGroup, check
 	    
             serial.on('data', data => {
 		//console.log(data, data.toString())
@@ -113,10 +113,28 @@ raspi.init(() => {
 			client.publish(`${topic}/maximumIntensity03`, maximumIntensity03)
 		    }
 			
+		    match = /PMAX ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== maximumPower) {
+			maximumPower = match[1]
+			client.publish(`${topic}/maximumPower`, maximumPower)
+		    }
+			
 		    match = /PAPP ([0-9]+)/g.exec(buffer)
 		    if(match && match[1] && match[1] !== apparentPower) {
 			apparentPower = match[1]
 			client.publish(`${topic}/apparentPower`, apparentPower)
+		    }	
+			
+		    match = /HHPHC ([A-Z]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== timeGroup) {
+			timeGroup = match[1]
+			client.publish(`${topic}/timeGroup`, timeGroup)
+		    }	
+			
+		    match = /MOTDETAT ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== check) {
+			check = match[1]
+			client.publish(`${topic}/check`, check)
 		    }			
 
 		    // Reset buffer
