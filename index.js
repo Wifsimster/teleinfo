@@ -11,7 +11,8 @@ raspi.init(() => {
         console.log('MQTT connected')
         const serial = new Serial(config.serial)
         serial.open(() => {
-	    let buffer = '', serialNumber, option, subscribedIntensity, index, match
+	    let buffer = '', match
+	    let serialNumber, option, subscribedIntensity, index, instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03
 	    
             serial.on('data', data => {
 		//console.log(data, data.toString())
@@ -28,6 +29,8 @@ raspi.init(() => {
 		// End of the buffer
 		if(data.startsWith('\u0003')) {
 		    buffer = buffer.replace('\u0003', '')
+			
+		    console.log('Parsing buffer')
 
 		    match = /ADCO ([0-9 \w]+)/g.exec(buffer)
 		    if(match && match[1] && match[1] !== serialNumber) {
@@ -51,6 +54,24 @@ raspi.init(() => {
 		    if(match && match[1] && match[1] !== index) {
 			index = match[1]
 			client.publish(`${topic}/index`, index)
+		    }
+			
+		    match = /IINST1 ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== instantaneousIntensity01) {
+			instantaneousIntensity01 = match[1]
+			client.publish(`${topic}/instantaneousIntensity01`, instantaneousIntensity01)
+		    }
+			
+		    match = /IINST1 ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== instantaneousIntensity02) {
+			instantaneousIntensity02 = match[1]
+			client.publish(`${topic}/instantaneousIntensity02`, instantaneousIntensity02)
+		    }
+			
+		    match = /IINST1 ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== instantaneousIntensity03) {
+			instantaneousIntensity03 = match[1]
+			client.publish(`${topic}/instantaneousIntensity03`, instantaneousIntensity03)
 		    }
 
 		    // Reset buffer
