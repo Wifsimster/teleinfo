@@ -19,9 +19,6 @@ raspi.init(() => {
 		subscribedPowerExceeded, maximumPower, apparentPower, timeGroup, check
 	    
             serial.on('data', data => {
-		//console.log(data, data.toString())
-		// console.log('------------------')
-
 		data = data.toString()
 		buffer += data
 
@@ -54,7 +51,7 @@ raspi.init(() => {
 			client.publish(`${topic}/subscribedIntensity (A)`, subscribedIntensity)
 		    }
 			
-		    match = /BASE ([0-9]+)/g.exec(buffer)
+		    match = /BASE ([0-9]+) /g.exec(buffer)
 		    if(match && match[1] && match[1] !== index) {
 			index = match[1]
 			client.publish(`${topic}/index (Wh)`, index)
