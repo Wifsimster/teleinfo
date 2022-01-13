@@ -11,9 +11,9 @@ raspi.init(() => {
         console.log('MQTT connected')
         const serial = new Serial(config.serial)
         serial.open(() => {
-	    let serialNumber = '', trame = ''
+	    let trame = ''
             serial.on('data', data => {
-//                console.log(data, data.toString())
+//              console.log(data, data.toString())
 //		console.log('------------------')
 
 		data = data.toString()
@@ -26,8 +26,19 @@ raspi.init(() => {
 
 		if(data.startsWith('\u0003')) {
 		    trame = trame.replace('\u0003', '')
-		    console.log('buffer', trame)
-		    client.publish(topic, trame)
+
+		    let serialNumber = /ADCO ([0-9 \w]+)/g.exec(trame)[1]
+		    if(serialNumber) {
+			client.publish(`${topic}/serialNumber`, serialNumber)
+		    }
+
+		    let option = /OPTARIF ([A-Z 0-9]+)/g.exec(trame)[1]
+	            let subscribedIntensity = /ISOUSC ([0-9]+)/g.exec(trame)[1]
+		    let index = /BASE ([0-9]+)/g.exec(trame)[1]
+
+		    let result = { serialNumber, option, subscribedIntensity, index }
+		    client.publish(topic, JSON.stringify(result))
+
 		    trame = ''
 		}
             })
