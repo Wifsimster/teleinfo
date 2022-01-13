@@ -10,7 +10,7 @@ raspi.init(() => {
         console.log('MQTT connected')
         const serial = new Serial(config.serial)
         serial.open(() => {
-	    let topic, buffer = '', match, object = {},
+	    let topic, buffer = '', match, object = {}
 	    let serialNumber, tariffOption, subscribedIntensity, index, currentPeriodTariff,
 		instantaneousIntensity, instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03,
 		maximumIntensity, maximumIntensity01, maximumIntensity02, maximumIntensity03,
