@@ -12,7 +12,9 @@ raspi.init(() => {
         const serial = new Serial(config.serial)
         serial.open(() => {
 	    let buffer = '', match
-	    let serialNumber, option, subscribedIntensity, index, instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03
+	    let serialNumber, option, subscribedIntensity, index, 
+		instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03,
+		subscribedPowerExceeded, maximumIntensity
 	    
             serial.on('data', data => {
 		//console.log(data, data.toString())
@@ -73,6 +75,18 @@ raspi.init(() => {
 			instantaneousIntensity03 = match[1]
 			client.publish(`${topic}/instantaneousIntensity03`, instantaneousIntensity03)
 		    }
+			
+		    match = /ADPS  ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== subscribedPowerExceeded) {
+			subscribedPowerExceeded = match[1]
+			client.publish(`${topic}/subscribedPowerExceeded`, subscribedPowerExceeded)
+		    }
+			
+		    match = /IMAX  ([0-9]+)/g.exec(buffer)
+		    if(match && match[1] && match[1] !== maximumIntensity) {
+			maximumIntensity = match[1]
+			client.publish(`${topic}/maximumIntensity`, maximumIntensity)
+		    }			
 
 		    // Reset buffer
 		    buffer = ''
