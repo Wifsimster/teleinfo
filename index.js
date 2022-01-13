@@ -5,13 +5,12 @@ const mqtt = require('mqtt')
 
 raspi.init(() => {
     const client = mqtt.connect(`mqtt://${config.mqtt.host}:${config.mqtt.port}`, { clientId: `teleinfo_${Math.random().toString(16).slice(3)}` })
-    const topic = 'linky'
 
     client.on('connect', () => {
         console.log('MQTT connected')
         const serial = new Serial(config.serial)
         serial.open(() => {
-	    let buffer = '', match
+	    let topic, buffer = '', match
 	    let serialNumber, tariffOption, subscribedIntensity, index, currentPeriodTariff,
 		instantaneousIntensity, instantaneousIntensity01, instantaneousIntensity02, instantaneousIntensity03,
 		maximumIntensity, maximumIntensity01, maximumIntensity02, maximumIntensity03,
@@ -35,8 +34,8 @@ raspi.init(() => {
 
 		    match = /ADCO ([0-9]+)/g.exec(buffer)
 		    if(match && match[1] && match[1] !== serialNumber) {
-			topic = `${topic}_serialNumber`
 			serialNumber = match[1]
+			topic = `linky/linky_${serialNumber}`
 			client.publish(`${topic}/serialNumber`, serialNumber)
 		    }
 
