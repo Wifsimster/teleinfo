@@ -1,5 +1,7 @@
 # teleinfo :fr:
 
+## Description
+
 Permet de lire les trames de téléinformation du compteur Linky.
 
 Parse et publie chaque information sur un broker MQTT.
@@ -8,10 +10,24 @@ Testé sous Node.js v10.24.1 avec un Raspberri Pi B v2.
 
 Le code est adapté pour les compteurs Linky en triphasé.
 
-# teleinfo :us:
+## Service
 
-Read Linky (french electric counter) UART information.
+Le fichier `teleinfo.service` est à déplacer dans `/etc/systemd/system/`.
 
-Publish data over MQTT.
+### Démarrer le service
 
-Run with Node.js v10.24.1 on a Raspberry Pi B v2.
+```sh
+systemctl start teleinfo.service
+```
+
+### Status du service
+
+```sh
+systemctl status teleinfo.service
+```
+
+### Redémarrer le service
+
+```sh
+systemctl restart teleinfo.service
+```
