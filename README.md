@@ -10,6 +10,10 @@ Testé sous Node.js v10.24.1 avec un Raspberri Pi B v2.
 
 Le code est adapté pour les compteurs Linky en triphasé.
 
+## Configuration
+
+Le fichier `config.js` est à modifier en fonction de votre configuration.
+
 ## Service
 
 Le fichier `teleinfo.service` est à déplacer dans `/etc/systemd/system/`.
